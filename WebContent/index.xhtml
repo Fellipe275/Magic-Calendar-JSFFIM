@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+      xmlns:h="http://xmlns.jcp.org/jsf/html" 
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+     
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+
+<link href="resources/css/bootstrap.css" rel="stylesheet" />
+<link href="resources/css/style.css" rel="stylesheet" />
+
+<title>Página Inicial</title>
+
+
+<style>
+.dropbtn {
+    color: blue;
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    	color: blue;
+    
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+    display: inline;
+}
+
+</style>
+</head>
+<body>
+
+		<div id="topo">
+		<div id="msg"><h:messages style="list-style-type: none" globalOnly="true" /></div>
+		<div id="menu">			
+		<h:form>
+			<ul>
+				<li class="dropbtn" style="color:#000;cursor:default;">
+				<h:outputText rendered="#{not empty pessoaBean.logado}" value="Bem Vindo, #{pessoaBean.logado.name}"/>
+				</li>
+				
+				<h:outputLink value="index.xhtml">
+				<li class="dropbtn">Inicio</li>				
+				</h:outputLink>
+				
+				<h:outputLink rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.ADMIN}" value="ativaUsuario.xhtml">
+				<li class="dropbtn" id="acceptUser" >Aceitar usuario</li>
+				</h:outputLink>
+				
+				<div class="dropdown">	
+				<h:panelGroup rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.ADMIN}">
+				<li class="dropbtn" id="registerHoliday">Adicionar Feriado
+				<div class="dropdown-content">
+					<h:outputLink value="addFeriadoFixo.xhtml">Feriado Fixo</h:outputLink>
+					<h:outputLink value="addFeriadoSubstituto.xhtml">Feriado Substituto</h:outputLink>
+					<h:outputLink value="addFeriadoMovel.xhtml">Feriado Móvel</h:outputLink>
+  				</div>		
+				</li>
+				</h:panelGroup>
+				</div>
+				
+				<h:outputLink rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.ADMIN}" value="altSenha.xhtml">
+				<li class="dropbtn" id="passwordChange">Alterar senha</li>
+				</h:outputLink>
+				
+				<h:commandLink rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.USUARIO}" action="#{pessoaBean.deleteConta}">
+				<li class="dropbtn" id="accountDelete">Deletar conta</li>
+				</h:commandLink>
+				
+				<h:commandLink rendered="#{not empty pessoaBean.logado}" action="#{pessoaBean.desLogar}">
+				<li class="dropbtn" >Sair</li>
+				</h:commandLink>
+				
+				<h:outputLink rendered="#{empty pessoaBean.logado}" value="cadastroPessoa.xhtml" >
+				<li class="dropbtn">Nova conta</li>
+				</h:outputLink>
+				
+				<h:outputLink rendered="#{empty pessoaBean.logado}" value="login.xhtml" >
+				<li class="dropbtn">Entrar</li>
+				</h:outputLink>
+				
+			</ul>
+		</h:form>
+		</div>
+		</div>					
+		
+	#{magicCalendarBean.gerarCalendar()}
+	<h:form>
+		<div id="dataAtual">
+			<h:commandLink value="Voltar" actionListener="#{magicCalendarBean.incrementaDataAtual(-1)}"/>
+			<b><h:outputText value="#{magicCalendarBean.dataAtualConcatenada}"/></b>
+			<h:commandLink value="Avançar" actionListener="#{magicCalendarBean.incrementaDataAtual(1)}"/>
+		</div>
+		<h:dataTable var="dia" value="#{magicCalendarBean.diasCalendar}" styleClass="table table-striped">
+			<h:column>
+			<f:facet name="header">Dia da Semana</f:facet>
+				<h:outputText value="#{magicCalendarBean.diaSemana(dia.id)}" />
+			</h:column>
+			<h:column>
+			<f:facet name="header">Dia</f:facet>
+				<h:outputText style="color:#{dia.color};" value="#{dia.id}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Feriado</f:facet>
+				<h:dataTable var="feriado" value="#{dia.feriado}">
+					<h:column>
+						<h:commandButton image="img/atualizar.png" rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.ADMIN}" action="#{cadastroCalendarBean.setOpcAltFeriado(dia, magicCalendarBean.dataAtual)}"/>
+						<h:commandButton image="img/delete.png" rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.ADMIN}" actionListener="#{cadastroCalendarBean.deletarFeriado(feriado)}"/>
+						<h:outputText style="color:#{feriado.color};" value="#{feriado.text}"/>
+					</h:column>
+				</h:dataTable>
+			</h:column>
+			<h:column rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.USUARIO}">
+			<f:facet name="header">Anotações</f:facet>
+				<h:commandButton image="img/add.png" action="#{cadastroCalendarBean.setOpcAltComentario(cadastroCalendarBean.CREATE, dia, null, magicCalendarBean.dataAtual)}"/><br/>
+				<h:dataTable var="comentario" value="#{dia.comentarios}">
+					<h:column>
+						<h:commandButton image="img/atualizar.png" action="#{cadastroCalendarBean.setOpcAltComentario(cadastroCalendarBean.UPDATE, dia, comentario, magicCalendarBean.dataAtual)}"/>
+						<h:commandButton image="img/delete.png" actionListener="#{cadastroCalendarBean.deletarComentario(dia, comentario)}"/>
+						#{comentario.text}
+					</h:column>
+				</h:dataTable>
+			</h:column>
+		</h:dataTable>
+	</h:form>
+	
+	<div id="help">
+		<table>
+			<tr>
+				<td><div id="red"></div></td>
+				<td><b>Fixo</b></td>
+			</tr>
+			<tr>
+				<td><div id="green"></div></td>
+				<td><b>Móvel</b></td>
+			</tr>
+			<tr>
+				<td><div id="blue"></div></td>
+				<td><b>Substituto</b></td>
+			</tr>
+		</table>
+	</div>
+	
+</body>
+</html>

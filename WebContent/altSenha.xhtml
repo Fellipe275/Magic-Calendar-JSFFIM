@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+      xmlns:h="http://xmlns.jcp.org/jsf/html" 
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+     
+<c:if test="#{empty pessoaBean.logado or pessoaBean.tipoUsuario == pessoaBean.USUARIO}">
+	#{facesContext.externalContext.redirect("index.xhtml")}
+</c:if>     
+     
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+
+<link href="resources/css/bootstrap.css" rel="stylesheet" />
+<link href="resources/css/style.css" rel="stylesheet" />
+
+<title>Página para Alterar Senha</title>
+
+<style>
+.dropbtn {
+    color: blue;
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+	color: blue;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+    display: inline;
+}
+
+</style>
+
+</head>
+<body>
+	<div id="topo">
+		<div id="msg"><h:messages style="list-style-type: none" globalOnly="true" /></div>
+		<div id="menu">
+		
+				<h:form>
+			<ul>
+				<li class="dropbtn" style="color:#000;cursor:default;">
+				<h:outputText rendered="#{not empty pessoaBean.logado}" value="Bem Vindo, #{pessoaBean.logado.name}"/>
+				</li>
+				
+				<h:outputLink value="index.xhtml">
+				<li class="dropbtn">Inicio</li>				
+				</h:outputLink>
+				
+				<h:outputLink rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.ADMIN}" value="ativaUsuario.xhtml">
+				<li class="dropbtn" id="acceptUser" >Aceitar usuario</li>
+				</h:outputLink>
+				
+				<div class="dropdown">	
+				<h:panelGroup>
+				<li class="dropbtn" id="registerHoliday">Adicionar Feriado
+				<div class="dropdown-content">
+					<h:outputLink value="addFeriadoFixo.xhtml">Feriado Fixo</h:outputLink>
+					<h:outputLink value="addFeriadoSubstituto.xhtml">Feriado Substituto</h:outputLink>
+					<h:outputLink value="addFeriadoMovel.xhtml">Feriado Móvel</h:outputLink>
+  				</div>		
+				</li>
+				</h:panelGroup>
+				</div>
+				
+				<h:outputLink rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.ADMIN}" value="altSenha.xhtml">
+				<li class="dropbtn" id="passwordChange">Alterar senha</li>
+				</h:outputLink>
+				
+				<h:commandLink rendered="#{not empty pessoaBean.logado and pessoaBean.tipoUsuario == pessoaBean.USUARIO}" action="#{pessoaBean.deleteConta}">
+				<li class="dropbtn" id="accountDelete">Deletar conta</li>
+				</h:commandLink>
+				
+				<h:commandLink rendered="#{not empty pessoaBean.logado}" action="#{pessoaBean.desLogar}">
+				<li class="dropbtn" >Sair</li>
+				</h:commandLink>
+				
+				<h:outputLink rendered="#{empty pessoaBean.logado}" value="cadastroPessoa.xhtml" >
+				<li class="dropbtn">Nova conta</li>
+				</h:outputLink>
+				
+				<h:outputLink rendered="#{empty pessoaBean.logado}" value="login.xhtml" >
+				<li class="dropbtn">Entrar</li>
+				</h:outputLink>
+				
+			</ul>
+		</h:form>
+		
+
+		</div>
+	</div>
+		<div class="container">
+	   	<div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+        <h1 class="text-center login-title">Alterar Senha</h1>
+        <div class="account-wall">
+
+	
+	<h:form id="form">
+		<h:outputLabel value="Nova Senha: " for="senha"/>
+		<h:inputSecret  id="senha" value="#{cadastrarPessoaBean.senha}" required="true" class="form-control"/>
+		<h:message style="color:red" for="senha"/>
+		<br/>
+		<h:outputLabel value="Repetir Senha: " for="reRenha"/>
+		<h:inputSecret  id="reSenha" value="#{cadastrarPessoaBean.reSenha}" required="true" class="form-control"/>
+		<h:message style="color:red" for="reSenha"/>
+		<br/>
+		<h:commandButton value="Atualizar" action="#{cadastrarPessoaBean.alterarSenha}" class="btn btn-lg btn-primary btn-block" />
+		<h:outputLink value="index.xhtml" class="btn btn-lg btn-primary btn-block">Voltar</h:outputLink >
+	</h:form>
+		</div>
+    	</div>
+		</div>
+		</div>
+	
+</body>
+</html>
