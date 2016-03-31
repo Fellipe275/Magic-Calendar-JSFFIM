@@ -1,0 +1,7 @@
+ - O Administrador do sistema é único.
+ - Ao fetuar um cadastro com a CHAVE, este cadastro
+   passa a ser o administrador do sistema.
+   
+ OBS: A senha pode ser qualquer uma.
+
+ CHAVE: adminMagic
